@@ -1,0 +1,5 @@
+outs:
+- md5: e3ec9eeddaab38eea998b348bcd17d94
+  size: 4465568
+  hash: md5
+  path: datos_resenas.csv
