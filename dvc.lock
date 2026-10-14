@@ -1,0 +1,34 @@
+schema: '2.0'
+stages:
+  visualice_data:
+    cmd: python src/data_visualization.py
+    deps:
+    - path: data/raw/datos_clientes.csv
+      hash: md5
+      md5: b46a5adb5c13bc3007ad2dfe45e58430
+      size: 438782
+    - path: data/raw/datos_resenas.csv
+      hash: md5
+      md5: e3ec9eeddaab38eea998b348bcd17d94
+      size: 4465568
+    - path: src/data_visualization.py
+      hash: md5
+      md5: 6812b99520aa1e6ee8f46d51576a70ab
+      size: 3341
+    outs:
+    - path: docs/figures/distribucion_sentimiento.png
+      hash: md5
+      md5: 3f0d961ccab8abbc4b7c27aaad52941a
+      size: 24347
+    - path: docs/figures/longitud_texto.png
+      hash: md5
+      md5: c98d360d85b51438a98119996afe49fa
+      size: 19328
+    - path: docs/figures/matriz_correlacion.png
+      hash: md5
+      md5: 5204ccbbda221ba6e7e034b63103a197
+      size: 27632
+    - path: docs/figures/matriz_correlacion_resenas.png
+      hash: md5
+      md5: 4e334a30c9fff3937f94e436ea2e7f99
+      size: 38194
