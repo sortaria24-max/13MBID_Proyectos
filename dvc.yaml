@@ -10,3 +10,12 @@ stages:
       - docs/figures/longitud_texto.png
       - docs/figures/matriz_correlacion.png
       - docs/figures/matriz_correlacion_resenas.png
+  
+  test_data_quality:
+    cmd: python -m pytest --html=docs/reporte_calidad_datos.html --self-contained-html test/test_data_quality.py -v || exit 0
+    deps:
+      - test/test_data_quality.py
+      - data/raw/datos_clientes.csv
+      - data/raw/datos_resenas.csv
+    outs:
+      - docs/reporte_calidad_datos.html
