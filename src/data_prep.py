@@ -18,8 +18,8 @@ def process_data(
         None
     """
     #Lectura de los datos
-    df_clientes = pd.read_csv("../data/raw/datos_clientes.csv", sep=";")
-    df_resenas = pd.read_csv("../data/raw/datos_resenas.csv", sep=";")
+    df_clientes = pd.read_csv(datos_cliente, sep=";")
+    df_resenas = pd.read_csv(datos_resenas, sep=";")
 
     ####################################################################
     # Selección de los datos (filtro de columnas)

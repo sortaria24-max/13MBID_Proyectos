@@ -19,3 +19,12 @@ stages:
       - data/raw/datos_resenas.csv
     outs:
       - docs/reporte_calidad_datos.html
+
+  data_prep:
+    cmd: python src/data_prep.py
+    deps:
+      - src/data_prep.py
+      - data/raw/datos_clientes.csv
+      - data/raw/datos_resenas.csv
+    outs:
+      - data/processed/datos_integrados.csv
