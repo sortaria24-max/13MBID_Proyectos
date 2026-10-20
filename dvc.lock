@@ -58,13 +58,13 @@ stages:
       size: 4465568
     - path: test/test_data_quality.py
       hash: md5
-      md5: 19f45626119f2e86203f6c3455c7cb49
-      size: 6044
+      md5: 2a120dad2d059fdd52eecd5c6cdb22d9
+      size: 7149
     outs:
     - path: docs/reporte_calidad_datos.html
       hash: md5
-      md5: 62bdb561c897d6b819d776ff94b834b3
-      size: 43908
+      md5: f67b1833a2c94f242eb701296c0e399a
+      size: 46753
   data_prep:
     cmd: python src/data_prep.py
     deps:

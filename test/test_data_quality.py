@@ -70,10 +70,17 @@ def test_schema_datos_resenas(datos_resenas):
         {
             "id_resena": Column(int, nullable=False),
             "id_cliente": Column(int, nullable=False),
-            "fecha_resena": Column(str, nullable=True),
+            "categoria_producto": Column(str, nullable=False),
+            "canal_compra": Column(str, nullable=False, checks=Check.isin(["Online", "Offline"])),
+            "plataforma": Column(str, nullable=False),
             "calificacion": Column(int, nullable=False, checks=Check.in_range(1, 5)),
+            "texto_resena": Column(str, nullable=False),
+            "tiempo_respuesta_horas": Column(float, nullable=True, checks=Check.ge(0)),
+            "problema_resuelto": Column(str, nullable=False, checks=Check.isin(["Sí", "No"])),
+            "reclamo_formal": Column(str, nullable=False, checks=Check.isin(["Sí", "No"])),
+            "importe_compra": Column(float, nullable=False, checks=Check.gt(0)),
+            "fecha_resena": Column(str, nullable=False, checks=Check.str_matches(r"^\d{4}-\d{2}-\d{2}$")),
             "sentimiento": Column(str, nullable=False, checks=Check.isin(SENTIMIENTOS)),
-            # TODO: agregar la validación de los atributos restantes. (Tiempo de respuesta, problema resuelto, reclamo formal, etc.) Son los del archivo datos_resenas.csv.
         }
    )
         
@@ -92,7 +99,7 @@ def test_basicos_clientes(datos_cliente):
     assert not datos_cliente.empty, "El dataframe de clientes está vacío"
     assert datos_cliente.shape[1] == 6, "El dataframe de clientes no tiene 6 columnas"
     assert datos_cliente["id_cliente"].notnull().all(), "La columna id_cliente tiene valores nulos"
-    # TODO: puedes completar otras validaciones básicas como verificar que no existan valores duplicados en la columna id_cliente, que la edad sea mayor a 0, etc.
+    assert (datos_cliente["edad"].dropna() > 0).all(), "Hay clientes con edad menor o igual a 0"
 
 def test_basicos_resenas(datos_resenas):
     """ Función para validar los datos de reseñas
@@ -108,7 +115,7 @@ def test_basicos_resenas(datos_resenas):
     assert datos_resenas.shape[1] == 13, "El dataframe de reseñas no tiene 13 columnas"
     assert datos_resenas["id_resena"].notnull().all(), "La columna id_resena tiene valores nulos"
     assert datos_resenas["id_cliente"].notnull().all(), "La columna id_cliente tiene valores nulos"
-    # TODO: puedes completar otras validaciones básicas como verificar que no existan valores duplicados en la columna id_resena, que la calificación esté entre 1 y 5, etc.
+    assert datos_resenas["calificacion"].between(1, 5).all(), "Hay calificaciones fuera del rango 1-5"
 
 def test_integridad_referencial(datos_cliente, datos_resenas):
     """ Función para validar la integridad referencial entre los datos de clientes y reseñas
@@ -134,14 +141,48 @@ def test_integridad_referencial(datos_cliente, datos_resenas):
     )
     integridad_referencial.validate(df_ids, lazy=True)
 
-####################################################################################
-# TODO: agregar al menos una función de test con una o más validaciones más        #
-# allá de las estruturas básicas de cada dataset, por ejemplo: unicidad de         #
-# claves (id) y completar las evaluaciones de estructura pendientes (reseñas)      #
-####################################################################################
-# EXTRA: validar alguna regla de negocio como podría ser la consistencia entre     #
-# 'calificacion' y 'sentimiento' entendiendo que una calificación baja se          #
-# relaciones con un sentimiento negativo y lo inverso para una calificación alta.  #
-# Por ejemplo, si la calificación es menor a 3, el sentimiento no debería ser      #
-# positivo en una proporción mayor al 5%.                                          #
-####################################################################################
+def test_unicidad_id_cliente(datos_cliente):
+    """ Función para validar que no existan id_cliente repetidos
+
+    Args:
+        datos_cliente (pd.DataFrame): Dataframe con los datos de clientes
+
+    Returns:
+        None
+    """
+    repetidos = datos_cliente["id_cliente"].duplicated().sum()
+    assert repetidos == 0, f"Hay {repetidos} id_cliente repetidos"
+
+
+def test_unicidad_id_resena(datos_resenas):
+    """ Función para validar que no existan id_resena repetidos
+
+    Args:
+        datos_resenas (pd.DataFrame): Dataframe con los datos de reseñas
+
+    Returns:
+        None
+    """
+    repetidos = datos_resenas["id_resena"].duplicated().sum()
+    assert repetidos == 0, f"Hay {repetidos} id_resena repetidos"
+
+
+def test_consistencia_calificacion_sentimiento(datos_resenas):
+    """ Función para validar la consistencia entre calificación y sentimiento.
+    Una calificación baja (1-2) no debería tener sentimiento positivo, ni una
+    calificación alta (4-5) sentimiento negativo, en más de un 5 % de los casos.
+
+    Args:
+        datos_resenas (pd.DataFrame): Dataframe con los datos de reseñas
+
+    Returns:
+        None
+    """
+    bajas = datos_resenas[datos_resenas["calificacion"] < 3]
+    altas = datos_resenas[datos_resenas["calificacion"] > 3]
+
+    prop_bajas_positivas = (bajas["sentimiento"] == "Positivo").mean()
+    prop_altas_negativas = (altas["sentimiento"] == "Negativo").mean()
+
+    assert prop_bajas_positivas <= 0.05, f"{prop_bajas_positivas:.2%} de las calificaciones bajas son positivas"
+    assert prop_altas_negativas <= 0.05, f"{prop_altas_negativas:.2%} de las calificaciones altas son negativas"
