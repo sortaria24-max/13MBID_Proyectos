@@ -10,6 +10,9 @@ stages:
       - docs/figures/longitud_texto.png
       - docs/figures/matriz_correlacion.png
       - docs/figures/matriz_correlacion_resenas.png
+      - docs/figures/sentimiento_tiempo_respuesta.png
+      - docs/figures/sentimiento_reclamo_formal.png
+      - docs/reporte_exploracion.html
   
   test_data_quality:
     cmd: python -m pytest --html=docs/reporte_calidad_datos.html --self-contained-html test/test_data_quality.py -v || exit 0

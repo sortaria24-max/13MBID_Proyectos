@@ -13,13 +13,13 @@ stages:
       size: 4465568
     - path: src/data_visualization.py
       hash: md5
-      md5: 6812b99520aa1e6ee8f46d51576a70ab
-      size: 3341
+      md5: b64a0e945e226da264594ded6115bfad
+      size: 4002
     outs:
     - path: docs/figures/distribucion_sentimiento.png
       hash: md5
-      md5: 3f0d961ccab8abbc4b7c27aaad52941a
-      size: 24347
+      md5: ffef6061626ca9bd1857b2cb54b8ca52
+      size: 24403
     - path: docs/figures/longitud_texto.png
       hash: md5
       md5: c98d360d85b51438a98119996afe49fa
@@ -32,6 +32,18 @@ stages:
       hash: md5
       md5: 4e334a30c9fff3937f94e436ea2e7f99
       size: 38194
+    - path: docs/figures/sentimiento_reclamo_formal.png
+      hash: md5
+      md5: a774645222ad5b9e5b6963945cc74eaf
+      size: 22719
+    - path: docs/figures/sentimiento_tiempo_respuesta.png
+      hash: md5
+      md5: 8b9019380fb2712f18c783a53cb16d2b
+      size: 23885
+    - path: docs/reporte_exploracion.html
+      hash: md5
+      md5: 95b693c3e6c9d097f7fcdaa20aac24e6
+      size: 1862973
   test_data_quality:
     cmd: python -m pytest --html=docs/reporte_calidad_datos.html 
       --self-contained-html test/test_data_quality.py -v || exit 0

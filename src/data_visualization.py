@@ -4,6 +4,7 @@ import warnings
 import matplotlib.pyplot as plt
 import seaborn as sns
 from pathlib import Path
+from ydata_profiling import ProfileReport
 
 warnings.filterwarnings('ignore', category=FutureWarning)
 warnings.filterwarnings('ignore', category=UserWarning)
@@ -29,7 +30,7 @@ def visualize_data(
     sns.set(style="whitegrid", palette="muted")
 
     # Grafico 1 - Distribución de la variable target (sentimiento)
-    orden_valores = ["Positivo", "Negativo", "Neutro"]   
+    orden_valores = ["Negativo", "Neutral", "Positivo"]  
     sns.countplot(x="sentimiento", data=df_resenas, order=orden_valores)
     plt.title("Distribución de la variable objetivo (sentimiento)")
     plt.xlabel("Sentimiento expresado en la reseña")
@@ -66,14 +67,28 @@ def visualize_data(
     plt.savefig(Output_dir / "matriz_correlacion_resenas.png")
     plt.close()
 
-##############################################################################################
-# TODO: Agregar al menos dos (2) visualizaciones más del escenario.
-#       Posiblemente, alguna que vincule a alguno de los atributos con la variable objetivo.
-#       Por ejmplo: sentimiento según tiempo de respuesta.
-#       También puedes ser la distribución de valores de otras vsariable.
-#-------
-# EXTRA: Generar un reporte automático con algunaa librería como sweetviz, dtale.
-##############################################################################################
+    # Gráfico 4 - Sentimiento según tiempo de respuesta
+    sns.boxplot(x="sentimiento", y="tiempo_respuesta_horas", data=df_resenas, order=["Negativo", "Neutral", "Positivo"])
+    plt.title("Tiempo de respuesta según sentimiento")
+    plt.xlabel("Sentimiento")
+    plt.ylabel("Tiempo de respuesta (horas)")
+    plt.savefig(Output_dir / "sentimiento_tiempo_respuesta.png")
+    plt.close()
+
+    # Gráfico 5 - Sentimiento según reclamo formal (proporción de cada clase)
+    proporciones = pd.crosstab(df_resenas["reclamo_formal"], df_resenas["sentimiento"], normalize="index")[["Negativo", "Neutral", "Positivo"]] * 100
+    ax = proporciones.plot(kind="bar", stacked=True, figsize=(8, 5))
+    ax.set_title("Sentimiento según reclamo formal")
+    ax.set_xlabel("Reclamo formal")
+    ax.set_ylabel("Porcentaje de reseñas")
+    ax.legend(title="Sentimiento")
+    plt.xticks(rotation=0)
+    plt.savefig(Output_dir / "sentimiento_reclamo_formal.png")
+    plt.close()
+
+    # EXTRA - Reporte automático de exploración
+    reporte = ProfileReport(df_resenas, title="Reporte de exploración - Reseñas", minimal=True)
+    reporte.to_file(Output_dir.parent / "reporte_exploracion.html")
 
 if __name__ == "__main__":
     visualize_data()
