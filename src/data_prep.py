@@ -1,5 +1,6 @@
 import pandas as pd
 from pathlib import Path
+import json
 
 def process_data(
     datos_cliente: str = "data/raw/datos_clientes.csv",
@@ -21,6 +22,15 @@ def process_data(
     df_clientes = pd.read_csv(datos_cliente, sep=";")
     df_resenas = pd.read_csv(datos_resenas, sep=";")
 
+    # Registro de las transformaciones aplicadas (se exporta al final)
+    reporte = {
+        "filas_iniciales": {"clientes": len(df_clientes), "resenas": len(df_resenas)},
+        "nulos_iniciales": {
+            "edad": int(df_clientes["edad"].isna().sum()),
+            "tiempo_respuesta_horas": int(df_resenas["tiempo_respuesta_horas"].isna().sum()),
+        },
+    }
+
     ####################################################################
     # Selección de los datos (filtro de columnas)
     # Agregar si corresponde otras acciones en función de la evaluación
@@ -36,6 +46,9 @@ def process_data(
     ####################################################################
     df_clientes_filtrado = df_clientes[(df_clientes['edad'] < 90) | (df_clientes['edad'].isna())]
     df_resenas_filtrado = df_resenas.drop_duplicates().copy()
+
+    reporte["clientes_eliminados_edad_fuera_de_rango"] = len(df_clientes) - len(df_clientes_filtrado)
+    reporte["resenas_duplicadas_eliminadas"] = len(df_resenas) - len(df_resenas_filtrado)
 
     ####################################################################
     # Tratamiento de valores nulos
@@ -54,6 +67,8 @@ def process_data(
         on='id_cliente',
         how='inner'
     )
+
+    reporte["resenas_perdidas_en_integracion"] = len(df_resenas_filtrado) - len(df_integrado)
 
     ####################################################################
     # Creación de atributos nuevos
@@ -98,12 +113,26 @@ def process_data(
     df_final.to_csv(f"{output_dir}/datos_integrados.csv", index=False)
 
     ####################################################################
-    # EXTRA: generar un reporte de las transformaciones aplicadas, por ejemplo:
-    # - Cantidad de filas iniciales y finales, cantidad de valores nulos 
-    # por columna, cantidad de duplicados eliminados, etc.
-    # Se puede exportar a un JSON o CSV o txt que sirva como registro de las
-    # transformaciones aplicadas a los datos.
+    # Reporte de las transformaciones aplicadas
     ####################################################################
+    reporte["atributos_nuevos"] = [
+        "longitud_resena",
+        "cantidad_palabras_resena",
+        "tiempo_respuesta_dias",
+        "cantidad_resenas_cliente",
+        "gasto_promedio_cliente",
+        "calificacion_promedio_cliente",
+        "proporcion_reclamos_cliente",
+    ]
+    reporte["dataset_final"] = {
+        "filas": len(df_final),
+        "columnas": df_final.shape[1],
+        "filas_duplicadas": int(df_final.duplicated().sum()),
+        "nulos_por_columna": {col: int(n) for col, n in df_final.isna().sum().items()},
+    }
+    Path("docs").mkdir(exist_ok=True)
+    with open("docs/reporte_transformaciones.json", "w", encoding="utf-8") as f:
+        json.dump(reporte, f, ensure_ascii=False, indent=2)
 
 if __name__ == "__main__":
     process_data()

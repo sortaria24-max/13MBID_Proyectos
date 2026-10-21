@@ -78,10 +78,14 @@ stages:
       size: 4465568
     - path: src/data_prep.py
       hash: md5
-      md5: 8e1ebccbc5acc0bce928410eb8adb9bb
-      size: 4997
+      md5: fe3084beaf664921a1f7dd026cb3f90d
+      size: 6509
     outs:
     - path: data/processed/datos_integrados.csv
       hash: md5
-      md5: 652ffd255e046eaaf109c50fa23064b4
-      size: 5207585
+      md5: 5f80ffa6091a4c7b1ceaf0fd5ebb6bd8
+      size: 5920396
+    - path: docs/reporte_transformaciones.json
+      hash: md5
+      md5: e3b4ac4d4db8a1763f825b6c84223a28
+      size: 1293
