@@ -65,6 +65,19 @@ def process_data(
     # Tiempo de respuesta expresado en días, más interpretable que en horas
     df_integrado["tiempo_respuesta_dias"] = df_integrado["tiempo_respuesta_horas"] / 24
 
+    # Atributos a nivel de cliente, calculados con todas sus reseñas
+    por_cliente = df_integrado.groupby("id_cliente")
+    # Cantidad de reseñas realizadas por el cliente
+    df_integrado["cantidad_resenas_cliente"] = por_cliente["id_resena"].transform("count")
+    # Gasto promedio del cliente por compra
+    df_integrado["gasto_promedio_cliente"] = por_cliente["importe_compra"].transform("mean")
+    # Promedio de calificación otorgada por el cliente
+    df_integrado["calificacion_promedio_cliente"] = por_cliente["calificacion"].transform("mean")
+    # Proporción de compras del cliente con reclamo formal (entre 0 y 1)
+    df_integrado["proporcion_reclamos_cliente"] = (
+        (df_integrado["reclamo_formal"] == "Sí").groupby(df_integrado["id_cliente"]).transform("mean")
+    )
+
     ####################################################################
     # Formateo de los datos
     ####################################################################
@@ -83,15 +96,6 @@ def process_data(
     ####################################################################
     Path(output_dir).mkdir(parents=True, exist_ok=True)
     df_final.to_csv(f"{output_dir}/datos_integrados.csv", index=False)
-
-    ####################################################################
-    # TODO: otros atributos que pueden generarse (implementar 2 al menos),
-    # por ejemplo:
-    # - Cantidad de reseñas por cliente
-    # - Promedio de calificación por cliente
-    # - Gasto promedio por cliente
-    # - Proporción de reclamos por compras totales de un cliente
-    ####################################################################
 
     ####################################################################
     # EXTRA: generar un reporte de las transformaciones aplicadas, por ejemplo:
