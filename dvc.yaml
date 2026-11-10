@@ -1,5 +1,5 @@
 stages:
-  visualice_data:
+    visualize_data::
     cmd: python src/data_visualization.py
     deps:
       - src/data_visualization.py
