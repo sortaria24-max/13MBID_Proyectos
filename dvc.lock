@@ -1,6 +1,6 @@
 schema: '2.0'
 stages:
-    visualize_data::
+  visualize_data:
     cmd: python src/data_visualization.py
     deps:
     - path: data/raw/datos_clientes.csv
