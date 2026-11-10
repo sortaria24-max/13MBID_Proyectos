@@ -1,6 +1,6 @@
-# 13MBID – Predicción del sentimiento de reseñas de clientes
+# 13MBID - Predicción del sentimiento de reseñas de clientes
 
-Proyecto de ciencia de datos desarrollado en la asignatura **13MBID – Metodologías de Gestión y Diseño de Proyectos de Big Data** (Máster Universitario en Big Data y Ciencia de Datos, VIU, ABR26-27).
+Proyecto de ciencia de datos desarrollado en la asignatura **13MBID - Metodologías de Gestión y Diseño de Proyectos de Big Data** (Máster Universitario en Big Data y Ciencia de Datos, VIU, ABR26-27).
 
 Una empresa de retail y e-commerce quiere aprovechar sus reseñas históricas para **predecir el sentimiento** (positivo, neutral o negativo) de cada reseña a partir de los datos de la reseña y del cliente. El proyecto sigue la metodología **CRISP-DM**, gestionada con **Scrum** e integrada con prácticas de **DataOps** y **MLOps**.
 
