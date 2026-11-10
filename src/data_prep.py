@@ -44,7 +44,8 @@ def process_data(
     # Agregar si corresponde otras acciones en función de la evaluación
     # de la calidad de los datos del paso previo.
     ####################################################################
-    df_clientes_filtrado = df_clientes[(df_clientes['edad'] < 90) | (df_clientes['edad'].isna())]
+    # Se admiten edades de hasta 90 años inclusive, en coherencia con el rango 18-90 validado en test_data_quality.py
+    df_clientes_filtrado = df_clientes[(df_clientes['edad'] <= 90) | (df_clientes['edad'].isna())].copy()
     df_resenas_filtrado = df_resenas.drop_duplicates().copy()
 
     reporte["clientes_eliminados_edad_fuera_de_rango"] = len(df_clientes) - len(df_clientes_filtrado)
@@ -86,8 +87,7 @@ def process_data(
     df_integrado["cantidad_resenas_cliente"] = por_cliente["id_resena"].transform("count")
     # Gasto promedio del cliente por compra
     df_integrado["gasto_promedio_cliente"] = por_cliente["importe_compra"].transform("mean")
-    # Promedio de calificación otorgada por el cliente
-    df_integrado["calificacion_promedio_cliente"] = por_cliente["calificacion"].transform("mean")
+    # No se calcula la calificación promedio del cliente: incluye la calificación de la propia reseña, que determina el sentimiento (fuga de información)
     # Proporción de compras del cliente con reclamo formal (entre 0 y 1)
     df_integrado["proporcion_reclamos_cliente"] = (
         (df_integrado["reclamo_formal"] == "Sí").groupby(df_integrado["id_cliente"]).transform("mean")
@@ -121,7 +121,6 @@ def process_data(
         "tiempo_respuesta_dias",
         "cantidad_resenas_cliente",
         "gasto_promedio_cliente",
-        "calificacion_promedio_cliente",
         "proporcion_reclamos_cliente",
     ]
     reporte["dataset_final"] = {
