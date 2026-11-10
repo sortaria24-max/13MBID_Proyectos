@@ -186,3 +186,26 @@ def test_consistencia_calificacion_sentimiento(datos_resenas):
 
     assert prop_bajas_positivas <= 0.05, f"{prop_bajas_positivas:.2%} de las calificaciones bajas son positivas"
     assert prop_altas_negativas <= 0.05, f"{prop_altas_negativas:.2%} de las calificaciones altas son negativas"
+
+def test_completitud(datos_cliente, datos_resenas):
+    """ Función para validar la completitud de los datos (DMBoK / ISO 25012).
+    Indicador: proporción de valores nulos por atributo (nulos / total de filas).
+    Umbral de aceptación: hasta un 5 % de nulos en cada atributo, el definido
+    en la memoria de trabajo; por encima, el atributo no se podría imputar sin
+    afectar a la representatividad del dataset.
+
+    Args:
+        datos_cliente (pd.DataFrame): Dataframe con los datos de clientes
+        datos_resenas (pd.DataFrame): Dataframe con los datos de reseñas
+
+    Returns:
+        None
+    """
+    UMBRAL_NULOS = 0.05
+    for nombre, df in [("clientes", datos_cliente), ("reseñas", datos_resenas)]:
+        proporcion_nulos = df.isna().mean()
+        incumplen = proporcion_nulos[proporcion_nulos > UMBRAL_NULOS]
+        assert incumplen.empty, (
+            f"Atributos de {nombre} con más de un {UMBRAL_NULOS:.0%} de nulos: "
+            + ", ".join(f"{col} ({p:.2%})" for col, p in incumplen.items())
+        )
