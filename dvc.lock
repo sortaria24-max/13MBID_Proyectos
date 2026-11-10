@@ -58,13 +58,13 @@ stages:
       size: 4465568
     - path: test/test_data_quality.py
       hash: md5
-      md5: 2a120dad2d059fdd52eecd5c6cdb22d9
-      size: 7149
+      md5: 7bde5bd6ece37c70b406605a4d0ad0b3
+      size: 8210
     outs:
     - path: docs/reporte_calidad_datos.html
       hash: md5
-      md5: f67b1833a2c94f242eb701296c0e399a
-      size: 46753
+      md5: ef4356dab96d6efb89f0556b1c89686d
+      size: 47336
   data_prep:
     cmd: python src/data_prep.py
     deps:
@@ -78,14 +78,14 @@ stages:
       size: 4465568
     - path: src/data_prep.py
       hash: md5
-      md5: fe3084beaf664921a1f7dd026cb3f90d
-      size: 6509
+      md5: c365595fd6d049bf21d4f6195c696e67
+      size: 6598
     outs:
     - path: data/processed/datos_integrados.csv
       hash: md5
-      md5: 5f80ffa6091a4c7b1ceaf0fd5ebb6bd8
-      size: 5920396
+      md5: 1a023554cf7e396cccec42a6e9a2d715
+      size: 5729443
     - path: docs/reporte_transformaciones.json
       hash: md5
-      md5: e3b4ac4d4db8a1763f825b6c84223a28
-      size: 1293
+      md5: 0edb4e1421e79568e3fd976cca5a5e38
+      size: 1212
