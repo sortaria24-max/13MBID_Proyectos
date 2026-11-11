@@ -32,3 +32,15 @@ stages:
     outs:
       - data/processed/datos_integrados.csv
       - docs/reporte_transformaciones.json
+
+  train_model:
+    cmd: python src/train_model.py
+    deps:
+      - src/train_model.py
+      - data/processed/datos_integrados.csv
+    outs:
+      - models/trained_model.pkl
+      - models/preprocessor.pkl
+      - docs/figures/confusion_matrix_test.png
+    metrics:
+      - metrics/train_metrics.json
