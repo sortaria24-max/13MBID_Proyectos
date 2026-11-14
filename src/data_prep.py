@@ -2,6 +2,39 @@ import pandas as pd
 from pathlib import Path
 import json
 
+
+
+def create_attributes(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Construye los atributos derivados que usa el modelo. Se usa en la preparación de los
+    datos y en la API, para que el modelo reciba las mismas variables en entrenamiento
+    y en producción.
+    - De la reseña: longitud del texto, número de palabras y tiempo de respuesta en días.
+    - Del cliente: número de reseñas, gasto promedio y proporción de reclamos, calculados
+      con todas sus reseñas. Si no hay identificador de cliente (por ejemplo, en la API,
+      que recibe una sola reseña), se calculan como si el cliente tuviera solo esa reseña.
+    """
+    df = df.copy()
+    # Longitud del texto de la reseña, en caracteres
+    df["longitud_resena"] = df["texto_resena"].str.len()
+    # Cantidad de palabras del texto de la reseña
+    df["cantidad_palabras_resena"] = df["texto_resena"].str.split().apply(len)
+    # Tiempo de respuesta expresado en días, más interpretable que en horas
+    df["tiempo_respuesta_dias"] = df["tiempo_respuesta_horas"] / 24
+
+    # No se calcula la calificación promedio del cliente: incluye la calificación de la propia reseña, que determina el sentimiento (fuga de información)
+    con_reclamo = df["reclamo_formal"] == "Sí"
+    if "id_cliente" in df.columns:
+        por_cliente = df.groupby("id_cliente")
+        df["cantidad_resenas_cliente"] = por_cliente["id_resena"].transform("count")
+        df["gasto_promedio_cliente"] = por_cliente["importe_compra"].transform("mean")
+        df["proporcion_reclamos_cliente"] = con_reclamo.groupby(df["id_cliente"]).transform("mean")
+    else:
+        df["cantidad_resenas_cliente"] = 1
+        df["gasto_promedio_cliente"] = df["importe_compra"]
+        df["proporcion_reclamos_cliente"] = con_reclamo.astype(float)
+    return df
+
 def process_data(
     datos_cliente: str = "data/raw/datos_clientes.csv",
     datos_resenas: str = "data/raw/datos_resenas.csv",
@@ -74,24 +107,7 @@ def process_data(
     ####################################################################
     # Creación de atributos nuevos
     ####################################################################
-    # Longitud del texto de la reseña, en caracteres
-    df_integrado["longitud_resena"] = df_integrado["texto_resena"].str.len()
-    # Cantidad de palabras del texto de la reseña
-    df_integrado["cantidad_palabras_resena"] = df_integrado["texto_resena"].str.split().apply(len)
-    # Tiempo de respuesta expresado en días, más interpretable que en horas
-    df_integrado["tiempo_respuesta_dias"] = df_integrado["tiempo_respuesta_horas"] / 24
-
-    # Atributos a nivel de cliente, calculados con todas sus reseñas
-    por_cliente = df_integrado.groupby("id_cliente")
-    # Cantidad de reseñas realizadas por el cliente
-    df_integrado["cantidad_resenas_cliente"] = por_cliente["id_resena"].transform("count")
-    # Gasto promedio del cliente por compra
-    df_integrado["gasto_promedio_cliente"] = por_cliente["importe_compra"].transform("mean")
-    # No se calcula la calificación promedio del cliente: incluye la calificación de la propia reseña, que determina el sentimiento (fuga de información)
-    # Proporción de compras del cliente con reclamo formal (entre 0 y 1)
-    df_integrado["proporcion_reclamos_cliente"] = (
-        (df_integrado["reclamo_formal"] == "Sí").groupby(df_integrado["id_cliente"]).transform("mean")
-    )
+    df_integrado = create_attributes(df_integrado)
 
     ####################################################################
     # Formateo de los datos
