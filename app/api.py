@@ -41,7 +41,7 @@ class Resena(BaseModel):
     ciudad: CIUDADES = Field(examples=["Buenos Aires"], description="Ciudad del usuario")
     antiguedad_cliente_meses: int = Field(ge=0, examples=[12], description="Antigüedad del cliente en meses")
 
-    # TODO: incorporar los atributos adicionales que hayan sido definidos en el proceso de transformación
+    # Los atributos derivados no se piden al usuario: se calculan en /predict con create_attributes
 
 
 class PredictionResponse(BaseModel):
