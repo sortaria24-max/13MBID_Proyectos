@@ -19,18 +19,11 @@ st.caption("Jose Fulgencio Soriano García - Proyecto 13MBID - Ingrese los datos
 
 @st.cache_data(ttl=300)
 def obtener_opciones():
-    """ Función para obtener las opciones de categorías de productos y ciudades desde la API
-
-    Returns:
-        dict: Diccionario con las opciones de categorías de productos y ciudades
-    """
-    try:
-        response = requests.get(f"{API_URL}/opciones", timeout=10)
-        response.raise_for_status()
-        return response.json()
-    except requests.exceptions.RequestException as e:
-        st.error(f"Error al obtener las opciones desde la API: {e}")
-        return {"categorias_producto": [], "ciudades": []}
+    """ Obtiene de la API las opciones de los atributos categóricos.
+    Si falla, lanza la excepción (y no se guarda en caché). """
+    response = requests.get(f"{API_URL}/opciones", timeout=60)  # 60 s: Render tarda en despertar
+    response.raise_for_status()
+    return response.json()
 
 try:
     opciones = obtener_opciones()
