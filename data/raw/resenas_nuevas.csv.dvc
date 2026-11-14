@@ -1,0 +1,5 @@
+outs:
+- md5: 3365fc44de1da1b89127034c490af2a0
+  size: 194744
+  hash: md5
+  path: resenas_nuevas.csv

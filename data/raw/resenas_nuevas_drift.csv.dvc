@@ -1,0 +1,5 @@
+outs:
+- md5: 49846ba1cfe851020b62b6581c5ba423
+  size: 195743
+  hash: md5
+  path: resenas_nuevas_drift.csv
