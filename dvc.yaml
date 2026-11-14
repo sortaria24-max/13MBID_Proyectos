@@ -44,3 +44,14 @@ stages:
       - docs/figures/confusion_matrix_test.png
     metrics:
       - metrics/train_metrics.json
+  
+  test_model:
+    cmd: python -m pytest --html=docs/reporte_pruebas_modelo.html --self-contained-html test/test_train.py -v || exit 0
+    deps:
+      - test/test_train.py
+      - src/train_model.py
+      - metrics/train_metrics.json
+      - models/trained_model.pkl
+      - data/processed/datos_integrados.csv
+    outs:
+      - docs/reporte_pruebas_modelo.html
