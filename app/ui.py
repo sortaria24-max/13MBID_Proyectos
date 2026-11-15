@@ -90,8 +90,11 @@ if enviar:
     st.metric("Sentimiento estimado", f"{COLORES.get(sentimiento, '')} {sentimiento}")
 
     if "probabilidad" in resultado:
-        probabilidades = pd.Series(resultado["probabilidad"], name="Probabilidad")
-        st.bar_chart(probabilidades)
+        # Una barra horizontal por clase, de mayor a menor probabilidad, con el porcentaje
+        st.caption("Probabilidad de cada sentimiento")
+        probabilidades = sorted(resultado["probabilidad"].items(), key=lambda x: x[1], reverse=True)
+        for clase, prob in probabilidades:
+            st.progress(prob, text=f"{COLORES.get(clase, '')} {clase}: {prob:.1%}")
         if sentimiento == "Negativo":
             st.warning("El sentimiento estimado es negativo. Se recomienda revisar la reseña y tomar acciones correctivas.")
 
