@@ -25,3 +25,6 @@ jobs:
 
       - name: Descargar datos, modelo y métricas
         run: uv run dvc pull data/processed/datos_integrados.csv models/trained_model.pkl metrics/train_metrics.json
+
+      - name: Ejecutar los tests del modelo
+        run: uv run python -m pytest test/test_train.py -v
