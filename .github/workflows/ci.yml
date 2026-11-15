@@ -16,3 +16,12 @@ jobs:
 
       - name: Instalar dependencias
         run: uv sync --frozen
+
+      - name: Configurar acceso a DagsHub (DVC)
+        run: |
+          uv run dvc remote modify origin --local auth basic
+          uv run dvc remote modify origin --local user ${{ secrets.DAGSHUB_USER }}
+          uv run dvc remote modify origin --local password ${{ secrets.DAGSHUB_TOKEN }}
+
+      - name: Descargar datos, modelo y métricas
+        run: uv run dvc pull data/processed/datos_integrados.csv models/trained_model.pkl metrics/train_metrics.json
